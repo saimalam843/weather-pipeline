@@ -1,36 +1,47 @@
 import React, { useState } from 'react';
-import { fetchWeather } from './services/api';
-import WeatherCard from './components/WeatherCard';
+import axios from 'axios';
 
-export default function App() {
+const App = () => {
   const [city, setCity] = useState('');
-  const [data, setData] = useState(null);
+  const [weather, setWeather] = useState(null);
   const [error, setError] = useState('');
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await fetchWeather(city);
-      setData(result);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}?city=${city}`);
+      setWeather(response.data);
       setError('');
-    } catch {
-      setError('Could not fetch weather');
+    } catch (err) {
+      setError('Failed to fetch weather data');
     }
   };
 
   return (
-    <div style={{ padding: 20, fontFamily: 'sans-serif' }}>
+    <div>
       <h1>Weather App</h1>
       <form onSubmit={handleSubmit}>
         <input
+          type="text"
           value={city}
-          onChange={e => setCity(e.target.value)}
+          onChange={(e) => setCity(e.target.value)}
           placeholder="Enter city"
         />
         <button type="submit">Get Weather</button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {data && <WeatherCard data={data} />}
+      {error && <p>{error}</p>}
+      {weather && (
+        <div>
+          <h2>{weather.city}</h2>
+          <p>Temperature: {weather.temperature}°C</p>
+          <p>Humidity: {weather.humidity}%</p>
+          <p>Wind Speed: {weather.wind_speed} km/h</p>
+          <p>Condition: {weather.condition}</p>
+          <p>Datetime: {weather.datetime}</p>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default App;
