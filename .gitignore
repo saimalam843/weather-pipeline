@@ -1,0 +1,12 @@
+# Node
+node_modules/
+.env
+# DVC
+*.dvc
+dvc.lock
+.cache/
+# Python
+__pycache__/
+*.pyc
+# Airflow
+airflow_logs/
